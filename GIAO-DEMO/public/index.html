@@ -6,16 +6,57 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>简易 9×9 Go</h1>
+  <div class="go-container">
+    <header class="go-header">
+      <h1>简易 Go（标准 19×19）</h1>
+    </header>
 
-  <!-- 颜色切换按钮 -->
-  <button id="toggle-color">切换黑/白</button>
+    <main class="go-main">
+      <section class="board-wrapper">
+        <!-- 棋盘容器（自适应屏幕） -->
+        <div id="board"></div>
+      </section>
 
-  <!-- 重置按钮 -->
-  <button id="reset-board">重置游戏</button>
+      <aside class="side-panel">
+        <div class="status-card">
+          <div class="status-row">
+            <span class="label">当前轮到：</span>
+            <span id="current-player" class="value">黑</span>
+          </div>
+          <button id="reset-board" class="primary-btn">重置对局</button>
+        </div>
 
-  <!-- 棋盘容器（9×9） -->
-  <div id="board"></div>
+        <div class="score-card">
+          <h2>计分器（中国规则风格）</h2>
+          <div class="player-score black-player">
+            <div class="player-title">黑方</div>
+            <div class="score-line">盘上实子：<span id="black-stones">0</span></div>
+            <div class="score-line">实地：<span id="black-territory">0</span></div>
+            <div class="score-line">提子数：<span id="black-captures">0</span></div>
+            <div class="score-line total">总目数：<span id="black-total">0</span></div>
+          </div>
+
+          <div class="player-score white-player">
+            <div class="player-title">白方（含贴目 <span id="komi">6.5</span>）</div>
+            <div class="score-line">盘上实子：<span id="white-stones">0</span></div>
+            <div class="score-line">实地：<span id="white-territory">0</span></div>
+            <div class="score-line">提子数：<span id="white-captures">0</span></div>
+            <div class="score-line total">总目数：<span id="white-total">0</span></div>
+          </div>
+        </div>
+
+        <div class="tip-card">
+          <h2>对局说明</h2>
+          <p>黑先白后，轮流在交叉点落子。</p>
+          <p>棋子被完全包围时会被提掉，自杀禁手与简单劫争已启用。</p>
+          <p>计分采用接近中国规则的面积计分，仅作练习参考。</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- 连续击破浮动文字容器 -->
+  <div id="combo-banner-root"></div>
 
   <script src="app.js"></script>
 </body>

@@ -1,32 +1,260 @@
-/* 1️⃣ 设置棋盘样式：9 行 9 列 */
+/* 全局围棋风格 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, #fdf3d4 0, #e7cfa0 45%, #d2b18a 100%);
+    color: #2c1a0b;
+}
+
+.go-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.go-header {
+    padding: 16px 32px 8px;
+}
+
+.go-header h1 {
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+.go-main {
+    flex: 1;
+    display: flex;
+    gap: 24px;
+    padding: 8px 32px 32px;
+    box-sizing: border-box;
+}
+
+.board-wrapper {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* 1️⃣ 棋盘容器：自适应屏幕高度与宽度，始终保持正方形 + 交叉点线条  */
 #board {
+    --board-size: min(90vmin, 90vh);
+
+    width: var(--board-size);
+    height: var(--board-size);
     display: grid;
-    grid-template-columns: repeat(9, 40px); /* 每个格子 40px */
-    grid-template-rows: repeat(9, 40px);
-    gap: 1px;
-    margin-top: 20px;
-    border: 2px solid #333;
-  }
-  
-  /* 2️⃣ 每个格子 */
-  #board div {
-    background: #f0d9b5;          /* 棋盘棕色 */
-    width: 40px;
-    height: 40px;
+    grid-template-columns: repeat(19, 1fr);
+    grid-template-rows: repeat(19, 1fr);
+    gap: 0;
+
+    background-color: #f0d9b5; /* 木纹底色 */
+    border: 4px solid #5b3b20;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+    /* 使用背景线条模拟纵横线，交点在每个格子中心 */
+    background-image:
+      linear-gradient(#000 1px, transparent 1px),
+      linear-gradient(90deg, #000 1px, transparent 1px);
+    background-size: calc(var(--board-size) / 19) calc(var(--board-size) / 19);
+    background-position: calc(var(--board-size) / 38) calc(var(--board-size) / 38);
+}
+
+/* 2️⃣ 每个交叉点（点击区域） */
+#board .cell {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 1px solid #999;
-  }
-  
-  /* 3️⃣ 黑白石子 */
-  .black, .white {
-    width: 30px;
-    height: 30px;
+    background: transparent;
+}
+
+#board .cell:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* 3️⃣ 棋子外观（石子始终画在交叉点中心） */
+.stone {
+    width: 72%;
+    height: 72%;
     border-radius: 50%;
-  }
-  
-  .black { background: #000; }
-  .white { background: #fff; border: 1px solid #000; }
-  
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease-out;
+}
+
+.stone.black {
+    background: radial-gradient(circle at 20% 20%, #555, #000);
+}
+
+.stone.white {
+    background: radial-gradient(circle at 20% 20%, #fff, #ddd);
+    border: 1px solid #000;
+}
+
+/* 4️⃣ 提子特效：多子同时被吃时触发 */
+.stone.capture-effect {
+    animation: capture-pop 0.4s ease-out forwards;
+}
+
+@keyframes capture-pop {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(255, 255, 0, 0.7);
+    }
+    50% {
+        transform: scale(1.3);
+        box-shadow: 0 0 20px rgba(255, 255, 0, 0.9);
+        filter: brightness(1.4);
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/* 侧边信息面板 */
+.side-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 380px;
+}
+
+.status-card,
+.score-card,
+.tip-card {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.status-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.status-row .label {
+    font-weight: 600;
+}
+
+.status-row .value {
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.primary-btn {
+    margin-top: 4px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    background: #5b3b20;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.primary-btn:hover {
+    background: #744b27;
+}
+
+.score-card h2,
+.tip-card h2 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    border-left: 4px solid #5b3b20;
+    padding-left: 6px;
+}
+
+.player-score {
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.player-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.black-player {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.white-player {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.score-line {
+    font-size: 13px;
+    margin: 2px 0;
+}
+
+.score-line.total {
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+.tip-card p {
+    margin: 4px 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* 连续击破浮动文字 */
+.combo-banner {
+    position: fixed;
+    left: 50%;
+    top: 25%;
+    transform: translateX(-50%);
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: rgba(91, 59, 32, 0.96);
+    color: #fdf3d4;
+    font-size: 20px;
+    letter-spacing: 0.2em;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    animation: combo-float 3s ease-out forwards;
+    z-index: 999;
+}
+
+@keyframes combo-float {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 30px) scale(0.9);
+    }
+    15% {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1.05);
+    }
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -10px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -40px) scale(0.95);
+    }
+}
+
+/* 响应式：小屏幕上下布局 */
+@media (max-width: 800px) {
+    .go-main {
+        flex-direction: column;
+    }
+
+    .board-wrapper {
+        justify-content: center;
+    }
+
+    .side-panel {
+        max-width: 100%;
+    }
+}
