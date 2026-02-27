@@ -1,0 +1,32 @@
+/* 1️⃣ 设置棋盘样式：9 行 9 列 */
+#board {
+    display: grid;
+    grid-template-columns: repeat(9, 40px); /* 每个格子 40px */
+    grid-template-rows: repeat(9, 40px);
+    gap: 1px;
+    margin-top: 20px;
+    border: 2px solid #333;
+  }
+  
+  /* 2️⃣ 每个格子 */
+  #board div {
+    background: #f0d9b5;          /* 棋盘棕色 */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #999;
+  }
+  
+  /* 3️⃣ 黑白石子 */
+  .black, .white {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+  
+  .black { background: #000; }
+  .white { background: #fff; border: 1px solid #000; }
+  
